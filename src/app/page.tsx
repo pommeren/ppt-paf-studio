@@ -7,25 +7,21 @@ import SlideWrapper from "@/components/SlideWrapper";
 import ProgressBar from "@/components/ProgressBar";
 import ParticlesBackground from "@/components/ParticlesBackground";
 import SlideCover from "@/components/slides/SlideCover";
-import SlideVision from "@/components/slides/SlideVision";
-import SlideEntryPoint from "@/components/slides/SlideEntryPoint";
-import SlideAutomation from "@/components/slides/SlideAutomation";
-import SlideScalability from "@/components/slides/SlideScalability";
+import SlideSitesIA from "@/components/slides/SlideSitesIA";
+import SlideAutomationIA from "@/components/slides/SlideAutomationIA";
+import SlideReventeIA from "@/components/slides/SlideReventeIA";
 import SlideAffiliation from "@/components/slides/SlideAffiliation";
 import SlideWorkflow from "@/components/slides/SlideWorkflow";
 import SlideRevenue from "@/components/slides/SlideRevenue";
-import SlideNextSteps from "@/components/slides/SlideNextSteps";
 
 const slides = [
   SlideCover,
-  SlideVision,
-  SlideEntryPoint,
-  SlideAutomation,
-  SlideScalability,
+  SlideSitesIA,
+  SlideAutomationIA,
+  SlideReventeIA,
   SlideAffiliation,
   SlideWorkflow,
   SlideRevenue,
-  SlideNextSteps,
 ];
 
 export default function Home() {
@@ -61,12 +57,10 @@ export default function Home() {
   useEffect(() => {
     let startX = 0;
     let startY = 0;
-
     const handleTouchStart = (e: TouchEvent) => {
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
     };
-
     const handleTouchEnd = (e: TouchEvent) => {
       const dx = e.changedTouches[0].clientX - startX;
       const dy = e.changedTouches[0].clientY - startY;
@@ -75,7 +69,6 @@ export default function Home() {
         else prev();
       }
     };
-
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchend", handleTouchEnd);
     return () => {
@@ -102,10 +95,8 @@ export default function Home() {
 
   return (
     <main className="w-screen h-screen overflow-hidden relative bg-[var(--color-dark)] slide-container">
-      {/* Ambient background */}
       <ParticlesBackground />
 
-      {/* Top-left branding */}
       <div className="fixed top-6 left-8 z-50 flex items-center gap-3">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center text-[10px] font-black tracking-tight">
           PAF
@@ -115,7 +106,6 @@ export default function Home() {
         </span>
       </div>
 
-      {/* Slide number - top right */}
       <div className="fixed top-6 right-8 z-50">
         <AnimatePresence mode="wait">
           <motion.span
@@ -136,7 +126,6 @@ export default function Home() {
 
       <ProgressBar current={currentSlide} total={slides.length} />
 
-      {/* Navigation buttons */}
       {currentSlide > 0 && (
         <motion.button
           initial={{ opacity: 0 }}
