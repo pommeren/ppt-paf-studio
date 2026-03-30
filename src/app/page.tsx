@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import SlideWrapper from "@/components/SlideWrapper";
 import ProgressBar from "@/components/ProgressBar";
+import ParticlesBackground from "@/components/ParticlesBackground";
 import SlideCover from "@/components/slides/SlideCover";
 import SlideVision from "@/components/slides/SlideVision";
 import SlideEntryPoint from "@/components/slides/SlideEntryPoint";
@@ -41,7 +44,6 @@ export default function Home() {
   const next = useCallback(() => goToSlide(currentSlide + 1), [currentSlide, goToSlide]);
   const prev = useCallback(() => goToSlide(currentSlide - 1), [currentSlide, goToSlide]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
@@ -56,7 +58,6 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [next, prev]);
 
-  // Touch / swipe navigation
   useEffect(() => {
     let startX = 0;
     let startY = 0;
@@ -83,13 +84,12 @@ export default function Home() {
     };
   }, [next, prev]);
 
-  // Mouse wheel
   useEffect(() => {
     let lastWheel = 0;
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const now = Date.now();
-      if (now - lastWheel < 600) return; // debounce
+      if (now - lastWheel < 600) return;
       lastWheel = now;
       if (e.deltaY > 0) next();
       else if (e.deltaY < 0) prev();
@@ -102,30 +102,62 @@ export default function Home() {
 
   return (
     <main className="w-screen h-screen overflow-hidden relative bg-[var(--color-dark)] slide-container">
+      {/* Ambient background */}
+      <ParticlesBackground />
+
+      {/* Top-left branding */}
+      <div className="fixed top-6 left-8 z-50 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center text-[10px] font-black tracking-tight">
+          PAF
+        </div>
+        <span className="text-[11px] text-white/20 font-medium tracking-widest uppercase font-display">
+          Studio
+        </span>
+      </div>
+
+      {/* Slide number - top right */}
+      <div className="fixed top-6 right-8 z-50">
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={currentSlide}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="text-[11px] text-white/15 font-mono tracking-widest"
+          >
+            {String(currentSlide + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+
       <SlideWrapper direction={direction} slideKey={currentSlide}>
         <CurrentSlideComponent />
       </SlideWrapper>
 
       <ProgressBar current={currentSlide} total={slides.length} />
 
-      {/* Side navigation buttons */}
+      {/* Navigation buttons */}
       {currentSlide > 0 && (
-        <button
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           onClick={prev}
-          className="fixed left-4 top-1/2 -translate-y-1/2 z-50 w-10 h-10 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.06] flex items-center justify-center transition-colors text-white/40 hover:text-white/70"
+          className="fixed left-5 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full glass flex items-center justify-center transition-all text-white/30 hover:text-white/60 hover:bg-white/[0.06]"
           aria-label="Previous slide"
         >
-          ←
-        </button>
+          <ChevronLeft className="w-5 h-5" />
+        </motion.button>
       )}
       {currentSlide < slides.length - 1 && (
-        <button
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           onClick={next}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-50 w-10 h-10 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.06] flex items-center justify-center transition-colors text-white/40 hover:text-white/70"
+          className="fixed right-5 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full glass flex items-center justify-center transition-all text-white/30 hover:text-white/60 hover:bg-white/[0.06]"
           aria-label="Next slide"
         >
-          →
-        </button>
+          <ChevronRight className="w-5 h-5" />
+        </motion.button>
       )}
     </main>
   );
